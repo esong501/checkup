@@ -26,7 +26,10 @@ def get_students(wb, thresholds=[50,50]):
         they will be added to a list of students to contact
     """
     # load worksheet
-    ws = wb['Summary']
+    try:
+        ws = wb['Summary']
+    except:
+        raise Exception()
     # instantiate list of students. List will consist of:
     # [[<first name>, <last name>, <email>, <'p' and/or 'c'>]]
     info_ls = []

@@ -5,6 +5,9 @@ def choose_file():
         to quit
     """
     files = ls.get_excel_files()
+    if files == []:
+        print("No Excel files in current directory.")
+        return None
     print("Excel (.xlsx) files in current directory:")
     for i in range(len(files)):
         print("[{}]: {}".format(i, files[i]))
