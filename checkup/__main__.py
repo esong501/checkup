@@ -10,6 +10,8 @@ import checkup.uinput as uin
 import checkup.output as out
 import excel.analyze as an
 
+DEFAULT_THRESHOLDS = [50,50]
+
 while True:
     filename = uin.choose_file()
     if filename == None:
@@ -17,7 +19,12 @@ while True:
         quit()
     wb = load_workbook(filename)
     while True:
-        default = input("Run analysis with default thresholds (50% for both)? 'y' or 'n': ")
+        if DEFAULT_THRESHOLDS[0] == DEFAULT_THRESHOLDS[1]:
+            input_str = "Run analysis with default thresholds ({}% for both)? 'y' or 'n': ".format(DEFAULT_THRESHOLDS[0])
+        else:
+            input_str = "Run analysis with default thresholds ({}% for participation, {}% for correctness)? 'y' or 'n': "\
+                .format(DEFAULT_THRESHOLDS[0], DEFAULT_THRESHOLDS[1])
+        default = input(input_str)
         if default not in 'yn':
             continue
         break
