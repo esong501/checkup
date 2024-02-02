@@ -19,6 +19,15 @@ import excel.indices as idx
 # Column F is average, column L is participation
 # student records start at row 3
 
+def get_percent(ws, i):
+    """ given a worksheet and an index for the student, we'll calculate
+        how many prelecture questions were answered correctly. This is
+        done by taking the Correct field (column M) and Incorrect field
+        (column N) and using it as the denominator for the value in
+        Incorrect
+    """
+    return idx.get_int(ws['N'][i])/(idx.get_int(ws['M'][i]) + idx.get_int(ws['N'][i]))
+
 def get_students(wb, thresholds=[50,50]):
     """ takes a openpyxl workbook handle and a set of thresholds (int list. Index 0 is 
         participation, index 1 is correctness). Default thresholds are 50% for both
