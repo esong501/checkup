@@ -36,11 +36,11 @@ def get_lecture_qs(ws):
 
 def get_percent(ws, i, qs):
     """ given a worksheet and an index for the student, we'll calculate
-        how many prelecture questions were answered incorrectly. This is
+        how many prelecture questions were answered correctly. This is
         done by taking the number of pre-lecture questions and using it
-        as the denominator for the value in Incorrect
+        as the denominator for the value in Correct
     """
-    return (idx.get_int(ws['N'][i])/qs) * 100
+    return (idx.get_int(ws['M'][i])/qs) * 100
 
 def get_students(wb, thresholds=[50,50]):
     """ takes a openpyxl workbook handle and a set of thresholds (int list. Index 0 is 
@@ -63,9 +63,9 @@ def get_students(wb, thresholds=[50,50]):
     info_ls = []
     pqs = get_prelecture_qs(wsq)
     for i in range(2,ws.max_row):
-        if get_percent(ws, i, pqs) > thresholds[1] and idx.get_int(ws['L'][i]) < thresholds[0]:
+        if get_percent(ws, i, pqs) < thresholds[1] and idx.get_int(ws['L'][i]) < thresholds[0]:
             info_ls += [[ws['D'][i].value, ws['E'][i].value, ws['C'][i].value, 'pc']]
-        elif get_percent(ws, i, pqs) > thresholds[1]:
+        elif get_percent(ws, i, pqs) < thresholds[1]:
             info_ls += [[ws['D'][i].value, ws['E'][i].value, ws['C'][i].value, 'c']]
         elif idx.get_int(ws['L'][i]) < thresholds[0]:
             info_ls += [[ws['D'][i].value, ws['E'][i].value, ws['C'][i].value, 'p']]
