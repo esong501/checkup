@@ -36,4 +36,8 @@ while True:
     except:
         print("\n**This file does not appear to be a TopHat results file.\nPlease make sure the correct file has been selected.")
         continue
+    # if default == 'y':
+    #     students = an.get_students(wb)
+    # else:
+    #     students = an.get_students(wb, uin.set_threshold())
     out.write_csv(filename, students)
