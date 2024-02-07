@@ -18,18 +18,27 @@ while True:
         print("Exiting...")
         quit()
     wb = load_workbook(filename)
+    default = None
     while True:
-        if DEFAULT_THRESHOLDS[0] == DEFAULT_THRESHOLDS[1]:
-            input_str = "Run analysis with default thresholds ({}% for both)? 'y' or 'n': ".format(DEFAULT_THRESHOLDS[0])
-        else:
-            input_str = "Run analysis with default thresholds ({}% for participation, {}% for correctness)? 'y' or 'n': "\
-                .format(DEFAULT_THRESHOLDS[0], DEFAULT_THRESHOLDS[1])
-        default = input(input_str)
-        if default not in 'yn':
+        use_thres = input("Run analysis with [t]hresholds or get [p]ercents? 't' or 'p': ")
+        if use_thres not in 'tp':
             continue
         break
+    if use_thres == 't':
+        while True:
+            if DEFAULT_THRESHOLDS[0] == DEFAULT_THRESHOLDS[1]:
+                input_str = "Run analysis with default thresholds ({}% for both)? 'y' or 'n': ".format(DEFAULT_THRESHOLDS[0])
+            else:
+                input_str = "Run analysis with default thresholds ({}% for participation, {}% for correctness)? 'y' or 'n': "\
+                    .format(DEFAULT_THRESHOLDS[0], DEFAULT_THRESHOLDS[1])
+            default = input(input_str)
+            if default not in 'yn':
+                continue
+            break
     try:
-        if default == 'y':
+        if use_thres == 'p':
+            students = an.get_students(wb, False)
+        elif default == 'y':
             students = an.get_students(wb)
         else:
             students = an.get_students(wb, uin.set_threshold())

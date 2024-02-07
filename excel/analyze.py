@@ -1,4 +1,5 @@
 import excel.indices as idx
+import statistics as stat
 
 # Some interesting things to note about openpyxl
 # docs found here: https://openpyxl.readthedocs.io/en/stable/index.html
@@ -42,7 +43,7 @@ def get_percent(ws, i, qs):
     """
     return (idx.get_int(ws['M'][i])/qs) * 100
 
-def get_students(wb, thresholds=[50,50]):
+def get_students(wb, use_thres=True, thresholds=[50,50]):
     """ takes a openpyxl workbook handle and a set of thresholds (int list. Index 0 is 
         participation, index 1 is correctness). Default thresholds are 50% for both
         participation and correctness. If any students do not meet these thresholds,
@@ -62,11 +63,26 @@ def get_students(wb, thresholds=[50,50]):
 
     info_ls = []
     pqs = get_prelecture_qs(wsq)
+    percents = []
     for i in range(2,ws.max_row):
-        if get_percent(ws, i, pqs) < thresholds[1] and idx.get_int(ws['L'][i]) < thresholds[0]:
-            info_ls += [[ws['D'][i].value, ws['E'][i].value, ws['C'][i].value, 'pc']]
-        elif get_percent(ws, i, pqs) < thresholds[1]:
-            info_ls += [[ws['D'][i].value, ws['E'][i].value, ws['C'][i].value, 'c']]
-        elif idx.get_int(ws['L'][i]) < thresholds[0]:
-            info_ls += [[ws['D'][i].value, ws['E'][i].value, ws['C'][i].value, 'p']]
+        percents += [get_percent(ws, i, pqs)]
+    if use_thres:
+        for i in range(len(percents)):
+            if percents[i] < thresholds[1] and idx.get_int(ws['L'][i+2]) < thresholds[0]:
+                info_ls += [[ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, 'pc']]
+            elif percents[i] < thresholds[1]:
+                info_ls += [[ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, 'c']]
+            elif idx.get_int(ws['L'][i+2]) < thresholds[0]:
+                info_ls += [[ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, 'p']]
+    else:
+        median = stat.median(percents)
+        average = stat.mean(percents)
+        info_ls += [['statistics','median',median,'average',average]]
+        for i in range(len(percents)):
+            if percents[i] < median and percents[i] < average:
+                info_ls += [['***', ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
+            elif percents[i] < average or percents[i] < median:
+                info_ls += [['*', ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
+            else:
+                info_ls += [[ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
     return info_ls
