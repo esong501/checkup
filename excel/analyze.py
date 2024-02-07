@@ -77,12 +77,17 @@ def get_students(wb, use_thres=True, thresholds=[50,50]):
     else:
         median = stat.median(percents)
         average = stat.mean(percents)
+        quarts = stat.quantiles(percents)
         info_ls += [['statistics','median',median,'average',average]]
+        good = []
+        med = []
+        bad = []
         for i in range(len(percents)):
-            if percents[i] < median and percents[i] < average:
-                info_ls += [['***', ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
-            elif percents[i] < average or percents[i] < median:
-                info_ls += [['*', ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
+            if percents[i] < quarts[0]:
+                bad += [['***', ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
+            elif percents[i] < quarts[1]:
+                med += [['*', ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
             else:
-                info_ls += [[ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
+                good += [[ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
+        info_ls += bad + med + good
     return info_ls
