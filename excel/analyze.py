@@ -35,6 +35,11 @@ def get_lecture_qs(ws):
     """
     return idx.col_to_index(ws.max_column) - idx.col_to_index('M') - get_prelecture_qs(ws)
 
+def sort_key(e):
+    if '*' in e[0]:
+        return e[4]
+    return e[3]
+
 def get_percent(ws, i, qs):
     """ given a worksheet and an index for the student, we'll calculate
         how many prelecture questions were answered correctly. This is
@@ -89,5 +94,8 @@ def get_students(wb, use_thres=True, thresholds=[50,50]):
                 med += [['*', ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
             else:
                 good += [[ws['D'][i+2].value, ws['E'][i+2].value, ws['C'][i+2].value, percents[i]]]
+        good.sort(key=sort_key)
+        med.sort(key=sort_key)
+        bad.sort(key=sort_key)
         info_ls += bad + med + good
     return info_ls
